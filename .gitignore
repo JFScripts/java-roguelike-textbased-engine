@@ -1,0 +1,15 @@
+# Arquivos compilados (Lixo gerado pelo Java)
+*.class
+bin/
+out/
+build/
+
+# Arquivos de configuração do VS Code (Opcional, mas recomendado não subir)
+.vscode/
+.settings/
+.classpath
+.project
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
