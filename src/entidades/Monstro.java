@@ -1,5 +1,6 @@
 package entidades;
 import enuns.Atributos;
+import enuns.Estados;
 import utils.Dado;
 
 public class Monstro implements Combatente{
@@ -58,6 +59,12 @@ public class Monstro implements Combatente{
         throw new UnsupportedOperationException("Unimplemented method 'receberBuff'");
     }
 
+    @Override
+    public void receberEfeito(Estados estado, int valor, int turnos) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'receberEfeito'");
+    }
+
      //Getter and Setters
      public String getNome() {
         return nome;
@@ -90,6 +97,14 @@ public class Monstro implements Combatente{
     public void setForca(int forca) {
         this.forca = forca;
     }
+
+    @Override
+    public int getVidaMaxima() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getVidaMaxima'");
+    }
+
+    
 
 
 }

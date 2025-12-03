@@ -1,10 +1,10 @@
 package utils;
 
-public class Buff {
+public class EfeitoTemporario {
     private int potencia;
     private int duracao;
     
-    public Buff(int potencia, int duracao) {
+    public EfeitoTemporario(int potencia, int duracao) {
         this.potencia = potencia;
         this.duracao = duracao;
     }

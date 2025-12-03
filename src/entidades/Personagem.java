@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import enuns.Atributos;
+import enuns.Estados;
 import enuns.TipoEfeito;
-import utils.Buff;
+import utils.EfeitoTemporario;
+import utils.ProcessadorDeEfeitos;
 import utils.Console;
 
 public class Personagem implements Combatente{
@@ -25,7 +27,8 @@ public class Personagem implements Combatente{
     private List<Item> mochila = new ArrayList<>();
     
     private HashMap<Atributos, Integer> atributos = new HashMap<>();//Atributos
-    private HashMap<Atributos, Buff> buffsAtivos = new HashMap<>();//Buffs
+    private HashMap<Atributos, EfeitoTemporario> buffsAtivos = new HashMap<>();//Buffs
+    private HashMap<Estados, EfeitoTemporario> estados = new HashMap<>();
     private List<Magia> grimorio = new ArrayList<>();
 
     
@@ -82,22 +85,37 @@ public class Personagem implements Combatente{
     }
 
     public void passarTurno(){
-        List<Atributos> paraRemover = new ArrayList<>();
-
+        List<Atributos> buffParaRemover = new ArrayList<>();
         for (Atributos chave : buffsAtivos.keySet()) {
-        Buff b = buffsAtivos.get(chave);
-        
-        b.diminuirTurno(); 
-
+            EfeitoTemporario b = buffsAtivos.get(chave);
+            b.diminuirTurno(); 
             if (b.getDuracao() <= 0) {
-                paraRemover.add(chave);
+                buffParaRemover.add(chave);
             }
          }
 
-        for (Atributos chaveMorta : paraRemover) {
+        
+        for (Atributos chaveMorta : buffParaRemover) {
             buffsAtivos.remove(chaveMorta);
             recalcularDerivados();
             Console.narracao("O efeito de " + chaveMorta + " acabou.");
+        }
+
+        List<Estados> estadoParaRemover = new ArrayList<>();
+        for(Estados chave : estados.keySet()){
+            EfeitoTemporario e = estados.get(chave);
+            
+            ProcessadorDeEfeitos.aplicarTick(this, chave, e.getPotencia()); 
+            
+            e.diminuirTurno();
+            
+            if(e.getDuracao() <= 0){
+                estadoParaRemover.add(chave);
+            }
+        }
+        for(Estados chaveMorta : estadoParaRemover){
+            estados.remove(chaveMorta);
+            recalcularDerivados();
         }
         regenerarMana(2 + (getAtributos(Atributos.INTELIGENCIA)));
     }
@@ -117,13 +135,19 @@ public class Personagem implements Combatente{
 
         for(TipoEfeito efeito: conjuracao.getEfeito()){
             switch (efeito) {
-                case DANO:
-                case FOGO:
                 case GELO:
                 case RAIO:
-                case NECROTICO:
                     alvo.receberDano(conjuracao.getPoder());
                     Console.narracao(alvo.getNome() + " se Machuca com " + conjuracao.getNome());
+                    break;
+                case DANO:
+                    alvo.receberEfeito(Estados.SANGRANDO, 2, 4);
+                    break;
+                case FOGO:
+                    alvo.receberEfeito(Estados.QUEIMADO, 2, 4);
+                    break;
+                case NECROTICO:
+                    alvo.receberEfeito(Estados.ENVENENADO, 2, 4);
                     break;
                 case CURA:
                     alvo.curar(conjuracao.getPoder());
@@ -159,6 +183,13 @@ public class Personagem implements Combatente{
     public void receberItem(Item itemRecebido){
         this.mochila.add(itemRecebido);
         Console.print("Você obteve " + itemRecebido.getNome());
+    }
+
+    public void receberEfeito(Estados estado, int valor, int turnos){
+        EfeitoTemporario efeito = new EfeitoTemporario(valor, turnos);
+        estados.put(estado, efeito);
+        System.out.print(this.nome + " esta ");
+        Console.printColorido(estado.getMensagem(), estado.getCorMensagem());     
     }
 
     //Funções da Interface
@@ -254,7 +285,7 @@ public class Personagem implements Combatente{
 
     @Override
     public void receberBuff(Atributos atributo, int valor, int duracao) {
-        Buff buffEscolhido = new Buff(valor, duracao);
+        EfeitoTemporario buffEscolhido = new EfeitoTemporario(valor, duracao);
         this.buffsAtivos.put(atributo, buffEscolhido);
         recalcularDerivados();
 
@@ -324,7 +355,7 @@ public class Personagem implements Combatente{
 
     public int getAtributos(Atributos escolha) {
         int atributoTotal = atributos.getOrDefault(escolha, 0);
-        Buff buffEncontrado = buffsAtivos.get(escolha);
+        EfeitoTemporario buffEncontrado = buffsAtivos.get(escolha);
         if(buffEncontrado != null){
             atributoTotal += buffEncontrado.getPotencia();
         }
@@ -348,11 +379,11 @@ public class Personagem implements Combatente{
         return atributos;
     }
 
-    public HashMap<Atributos, Buff> getBuffsAtivos() {
+    public HashMap<Atributos, EfeitoTemporario> getBuffsAtivos() {
         return buffsAtivos;
     }
 
-    public void setBuffsAtivos(HashMap<Atributos, Buff> buffsAtivos) {
+    public void setBuffsAtivos(HashMap<Atributos, EfeitoTemporario> buffsAtivos) {
         this.buffsAtivos = buffsAtivos;
     }
 

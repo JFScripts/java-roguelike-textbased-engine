@@ -1,9 +1,7 @@
 package telas;
 
-import utils.Buff;
+import utils.EfeitoTemporario;
 import utils.Console;
-
-import static utils.Console.print;
 
 import java.util.Scanner;
 
@@ -31,7 +29,7 @@ public class JogadorStatus implements Tela{
             int valorTotal = jogador.getAtributos(cAtributos);
             int valorBuff = 0;
             String mensagem = "";
-            Buff buffEncontrado = jogador.getBuffsAtivos().get(cAtributos);
+            EfeitoTemporario buffEncontrado = jogador.getBuffsAtivos().get(cAtributos);
             if(buffEncontrado != null){
                 valorBuff = buffEncontrado.getPotencia();
                 valorTotal -= valorBuff;
