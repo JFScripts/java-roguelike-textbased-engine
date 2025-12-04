@@ -17,7 +17,10 @@ import utils.Console;
 
 public class Personagem implements Combatente{
     private String nome;
-    private int vida, mana, ac, level = 1;
+    private int vida; 
+    private int mana; 
+    private int ac; 
+    private int level = 1;
     private int vidaMaxima;
     private int manaMaxima;
     private int pecasOuro = 0;
@@ -25,28 +28,35 @@ public class Personagem implements Combatente{
     private Item mDireita; //Arma mão direita
     private Item mEsquerda; //Arma mão esquerda
     private List<Item> mochila = new ArrayList<>();
-    
-    private HashMap<Atributos, Integer> atributos = new HashMap<>();//Atributos
+    private FichaAtributos ficha;
     private HashMap<Atributos, EfeitoTemporario> buffsAtivos = new HashMap<>();//Buffs
     private HashMap<Estados, EfeitoTemporario> estados = new HashMap<>();
     private List<Magia> grimorio = new ArrayList<>();
 
     
-    //Construtor do personagem, obrigatório a ter esses valores
+    // TODO: Fazer a forca influenciar na capacidade de carga
+
+    /**Inicializa um novo personagem com os valores bases definido
+     * @param nome Para imersão o jogador pode colocar um nome para o personagem
+     * @param inteligencia  Capacidade magica e regeneracao de mana
+     * @param forca Dano fisico do jogador
+     * @param constituicao Define a vida maxima
+     * @param agilidade Calcula o AC do jogador
+     * @param ac A dificuldade para acertar o jogador
+     * @param mEsquerda Item que o jogador está segurando na mao esquerda
+     * @param mDireita Item que o jogador está segurando na mao direita
+     */
     public Personagem(String nome, int inteligencia, int forca, int constituicao, int agilidade, int ac, Arma mEsquerda, Arma mDireita) {
+
         this.nome = nome;
-        //Iniciando o Mapa
-        atributos.put(Atributos.INTELIGENCIA, inteligencia);
-        atributos.put(Atributos.FORCA, forca);
-        atributos.put(Atributos.CONSTITUICAO, constituicao);
-        atributos.put(Atributos.AGILIDADE, agilidade);
+        this.ficha = new FichaAtributos(inteligencia, forca, constituicao, agilidade);
         this.mEsquerda = mEsquerda;
         this.mDireita = mDireita;
-        //===
+
         recalcularDerivados();
+        
         this.vida = this.vidaMaxima;
         this.mana = this.manaMaxima;
-
     }
 
     //Funções privadas
@@ -72,10 +82,15 @@ public class Personagem implements Combatente{
         }
     }
 
-    public void aumentarAtributo(Atributos atributo){
-        int valorAtual = atributos.getOrDefault(atributo, 0);
-        atributos.put(atributo, valorAtual + 1);
-        Console.narracao(atributo + " Subiu para " + (valorAtual + 1));
+
+    
+    /**Função responsável por aumentar o nível do jogador
+     * @param atributo
+     * O método aumenta o nivel do jogador, o atributo e reseta a vida e a mana para os valores máximos
+     */
+    public void passarDeNivel(Atributos atributo){
+        
+        ficha.aumentarAtributo(atributo, 1);
         this.level ++;
         recalcularDerivados();
         this.vida = this.vidaMaxima;
@@ -353,18 +368,17 @@ public class Personagem implements Combatente{
         this.manaMaxima = manaMaxima;
     }
 
+    /** Método responsável por pegar o valor do atributo do jogador
+     * @param escolha
+     * @return Retorna o valor total COM o buff ativo
+     */
     public int getAtributos(Atributos escolha) {
-        int atributoTotal = atributos.getOrDefault(escolha, 0);
+        int atributoTotal = ficha.getValorBase(escolha);
         EfeitoTemporario buffEncontrado = buffsAtivos.get(escolha);
         if(buffEncontrado != null){
             atributoTotal += buffEncontrado.getPotencia();
         }
         return atributoTotal;
-    }
-
-    
-    public void setAtributos(HashMap<Atributos, Integer> atributos) {
-        this.atributos = atributos;
     }
 
     public int getMana() {
@@ -373,10 +387,6 @@ public class Personagem implements Combatente{
 
     public void setMana(int mana) {
         this.mana = mana;
-    }
-
-    public HashMap<Atributos, Integer> getAtributos() {
-        return atributos;
     }
 
     public HashMap<Atributos, EfeitoTemporario> getBuffsAtivos() {
