@@ -33,7 +33,7 @@ public class TelaMagia implements Tela{
         while (true) {
             Console.limpar();
             Console.titulo("Grimório");
-            int tamanhoGrimorio = jogador.getGrimorio().size();
+            int tamanhoGrimorio = jogador.getGrimorio().getMagias().size();
 
             if(tamanhoGrimorio == 0){
                 Console.print(jogador.getNome() + " não conhece nenhuma magia.");
@@ -42,10 +42,12 @@ public class TelaMagia implements Tela{
             }
 
             Console.print("Magias Conhecidas:");
+
+
             for(int i = 0; i < tamanhoGrimorio; i ++){
-                String nomeCurMagia = jogador.getGrimorio().get(i).getNome();
-                int custoCurMagia = jogador.getGrimorio().get(i).getCustoMana();
-                Console.opcao((i+1) + " - " + nomeCurMagia + " | MP: " +custoCurMagia + " | Efeitos: " + jogador.getGrimorio().get(i).getEfeito());
+                String nomeCurMagia = jogador.getGrimorio().getMagiaIndex(i).getNome();
+                int custoCurMagia = jogador.getGrimorio().getMagiaIndex(i).getCustoMana();
+                Console.opcao((i+1) + " - " + nomeCurMagia + " | MP: " +custoCurMagia + " | Efeitos: " + jogador.getGrimorio().getMagiaIndex(i).getEfeito());
             }
             Console.print("Digite a magia que deseja conjurar ou pressione 0 para voltar");
             int escolha = input.nextInt();
@@ -53,7 +55,7 @@ public class TelaMagia implements Tela{
             if(escolha == 0){
                 return ultimaTela;
             } else if(escolha > 0 && escolha <= tamanhoGrimorio){
-                Magia magiaSelecionada = jogador.getGrimorio().get(escolha-1);
+                Magia magiaSelecionada = jogador.getGrimorio().getMagiaIndex(escolha - 1);
                 List<Combatente> alvos = new ArrayList<>();
                 alvos.add(jogador);
                 Combatente alvoFinal;

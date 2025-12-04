@@ -22,17 +22,19 @@ public class LevelUP implements Tela{
         Console.print("Parabéns! Você passou de nivel, escolha um atributo para melhorar");
 
         Atributos[] atributo = Atributos.values();
-        for(int i = 0; i < jogador.getAtributos().size(); i ++){
-            Console.opcao((i + 1) + " - " + atributo[i] +" : " + jogador.getAtributos().get(atributo[i]));
+        for(int i = 0; i < atributo.length; i ++){
+            Atributos curAtributos = atributo[i];
+            int valorAtual = jogador.getAtributos(curAtributos);
+            Console.opcao((i + 1) + " - " + curAtributos +" : " + valorAtual);
         }
         while (true) {
             Console.print("Digite o Atributo desejado");
             int escolha = Console.getIntINPUT(input);
-            if(escolha <= 0 || (escolha - 1) > jogador.getAtributos().size()){
+            if(escolha <= 0 || (escolha - 1) > atributo.length){
                 Console.print("Opção Inválida, tente novamente");
             } else {
                 Atributos atributoEscolhido = atributo[escolha - 1];
-                jogador.aumentarAtributo(atributoEscolhido);
+                jogador.passarDeNivel(atributoEscolhido);
                 if(atributoEscolhido == Atributos.INTELIGENCIA){
                     Magia novaMagia = GeradorDeMagia.gerarMagia(jogador);
                     jogador.aprenderMagia(novaMagia);

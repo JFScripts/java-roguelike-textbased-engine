@@ -11,11 +11,11 @@ import entidades.Personagem;
 import enuns.Cor;
 import utils.Console;
 
-public class Mochila implements Tela {
+public class TelaMochila implements Tela {
 
     private Tela ultimaTela;
 
-    public Mochila(Tela ultimaTela) {
+    public TelaMochila(Tela ultimaTela) {
         this.ultimaTela = ultimaTela;
     }
 
@@ -23,7 +23,7 @@ public class Mochila implements Tela {
     public Tela executar(Personagem jogador, Scanner input) {
         Console.limpar();
         Console.titulo("Mochila de " + jogador.getNome());
-        List<Item> mochilaLista = jogador.getMochila();
+        List<Item> mochilaLista = jogador.getMochila().getItens();
         
         if(mochilaLista.size() > 0){
             for(int i = 0; i < mochilaLista.size(); i++){
@@ -71,7 +71,7 @@ public class Mochila implements Tela {
                     boolean sucesso = escolherMao(jogador, arma, input);
                     if(sucesso) return;
                 case 2:
-                    jogador.getMochila().remove(arma);
+                    jogador.getMochila().removerItem(arma);
                     Console.printColorido("Você jogou " + arma.getNome() + " fora e ele desaparece", Cor.VERMELHO);
                     Console.pressioneENTER(input);
                     return;
@@ -116,7 +116,7 @@ public class Mochila implements Tela {
                 case 0: 
                     return;
                 case 1:
-                    jogador.getMochila().remove(item);
+                    jogador.getMochila().removerItem(item);
                     Console.printColorido("Você jogou " + item.getNome() + " fora e ele desaparece", Cor.VERMELHO);
                     Console.pressioneENTER(input);
                     return;

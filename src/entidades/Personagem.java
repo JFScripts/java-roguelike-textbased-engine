@@ -17,36 +17,50 @@ import utils.Console;
 
 public class Personagem implements Combatente{
     private String nome;
-    private int vida, mana, ac, level = 1;
+    private int vida; 
+    private int mana; 
+    private int ac; 
+    private int level = 1;
     private int vidaMaxima;
     private int manaMaxima;
-    private int pecasOuro = 0;
+
+    private Mochila mochila;
+    private FichaAtributos ficha;
+    private Grimorio grimorio;
 
     private Item mDireita; //Arma mão direita
     private Item mEsquerda; //Arma mão esquerda
-    private List<Item> mochila = new ArrayList<>();
     
-    private HashMap<Atributos, Integer> atributos = new HashMap<>();//Atributos
     private HashMap<Atributos, EfeitoTemporario> buffsAtivos = new HashMap<>();//Buffs
     private HashMap<Estados, EfeitoTemporario> estados = new HashMap<>();
-    private List<Magia> grimorio = new ArrayList<>();
+
 
     
-    //Construtor do personagem, obrigatório a ter esses valores
+    // TODO: Fazer a forca influenciar na capacidade de carga
+
+    /**Inicializa um novo personagem com os valores bases definido
+     * @param nome Para imersão o jogador pode colocar um nome para o personagem
+     * @param inteligencia  Capacidade magica e regeneracao de mana
+     * @param forca Dano fisico do jogador
+     * @param constituicao Define a vida maxima
+     * @param agilidade Calcula o AC do jogador
+     * @param ac A dificuldade para acertar o jogador
+     * @param mEsquerda Item que o jogador está segurando na mao esquerda
+     * @param mDireita Item que o jogador está segurando na mao direita
+     */
     public Personagem(String nome, int inteligencia, int forca, int constituicao, int agilidade, int ac, Arma mEsquerda, Arma mDireita) {
+
         this.nome = nome;
-        //Iniciando o Mapa
-        atributos.put(Atributos.INTELIGENCIA, inteligencia);
-        atributos.put(Atributos.FORCA, forca);
-        atributos.put(Atributos.CONSTITUICAO, constituicao);
-        atributos.put(Atributos.AGILIDADE, agilidade);
+        this.ficha = new FichaAtributos(inteligencia, forca, constituicao, agilidade);
+        this.mochila = new Mochila();
+        this.grimorio = new Grimorio();
         this.mEsquerda = mEsquerda;
         this.mDireita = mDireita;
-        //===
+
         recalcularDerivados();
+        
         this.vida = this.vidaMaxima;
         this.mana = this.manaMaxima;
-
     }
 
     //Funções privadas
@@ -72,10 +86,15 @@ public class Personagem implements Combatente{
         }
     }
 
-    public void aumentarAtributo(Atributos atributo){
-        int valorAtual = atributos.getOrDefault(atributo, 0);
-        atributos.put(atributo, valorAtual + 1);
-        Console.narracao(atributo + " Subiu para " + (valorAtual + 1));
+
+    
+    /**método responsável por aumentar o nível do jogador
+     * @param atributo
+     * O método aumenta o nivel do jogador, o atributo e reseta a vida e a mana para os valores máximos
+     */
+    public void passarDeNivel(Atributos atributo){
+        
+        ficha.aumentarAtributo(atributo, 1);
         this.level ++;
         recalcularDerivados();
         this.vida = this.vidaMaxima;
@@ -120,8 +139,11 @@ public class Personagem implements Combatente{
         regenerarMana(2 + (getAtributos(Atributos.INTELIGENCIA)));
     }
 
+    /**Método para a Delegação da magia
+     * @param novaMagia A magia nova para aprender do tipo Magia
+     */
     public void aprenderMagia(Magia novaMagia){
-        this.grimorio.add(novaMagia);
+        this.grimorio.aprenderMagia(novaMagia);;
     }
 
     public void conjurarMagia(Combatente alvo, Magia conjuracao){
@@ -180,9 +202,11 @@ public class Personagem implements Combatente{
 
     }
 
+    /**Esse método serve para receber um item
+     * @param itemRecebido
+     */
     public void receberItem(Item itemRecebido){
-        this.mochila.add(itemRecebido);
-        Console.print("Você obteve " + itemRecebido.getNome());
+        this.mochila.adicionarItem(itemRecebido);
     }
 
     public void receberEfeito(Estados estado, int valor, int turnos){
@@ -217,37 +241,47 @@ public class Personagem implements Combatente{
         }
     }
 
+    /**Método para fazer o jogador ganhar ouro
+     * @param qntGanha
+     */
     public void ganharOuro(int qntGanha){
-        int curOuro = getPecasOuro();
-        int ouroTotal = curOuro + qntGanha;
-        setPecasOuro(ouroTotal);
+        mochila.adicionarOuro(qntGanha);
         Console.print("Você recebeu " + qntGanha + " peças de ouro");
     }
 
-    public boolean removerOuro(int qntRemover, String mensagemDeFalha){
-        int curOuro = getPecasOuro();
-        if(qntRemover > curOuro){
-            return false;
-        } else {
-            int ouroTotal = curOuro - qntRemover;
-            setPecasOuro(ouroTotal);
-            return true;
-        }
+
+    /**Método para remover o ouro do jogador
+     * @param qntRemover
+     * @return retorna true se conseguiu e false se não conseguiu
+     */
+    public boolean removerOuro(int qntRemover){
+        return this.mochila.removerOuro(qntRemover);
     }
 
+    /**Método para mostrar a quantidade de ouro atual
+     * @return
+     */
+    public int getOuro(){
+        return this.mochila.getOuro();
+    }
+
+    /**Essa método é responsável por fazer o jogador empunhar itens
+     * @param itemNovo O item que será adicionado
+     * @param naDireita Se for true o item sera adicionado na mão direita se não na esquerda
+     */
     public void empunharItens(Item itemNovo, boolean naDireita){
         
-        if(!getMochila().contains(itemNovo)){
+        //Fazendo essa verificação para não dar erro
+        if(!this.mochila.contem(itemNovo)){
             Console.print("ERRO: Item não Existe na Mochila");
             return;
         }
-        
+
         Item itemNaMaoAtual = (naDireita) ? this.mDireita : this.mEsquerda;
         String mao = (naDireita) ? "Mão Direita" : "Mão Esquerda";
-        
 
         if(itemNaMaoAtual != null){
-            this.mochila.add(itemNaMaoAtual);
+            mochila.adicionarItem(itemNaMaoAtual);
             Console.print("Você guardou "+ itemNaMaoAtual.getNome() + " em sua mochila");
         }
         if(naDireita){
@@ -255,7 +289,7 @@ public class Personagem implements Combatente{
         } else {
             this.mEsquerda = itemNovo;
         }
-        this.mochila.remove(itemNovo);
+        mochila.removerItem(itemNovo);
         Console.print("Você empunhou " + itemNovo.getNome() + " em sua mao "+ mao);
         
 
@@ -290,8 +324,6 @@ public class Personagem implements Combatente{
         recalcularDerivados();
 
     }
-
-    
 
      //Getters e Setters
      public String getNome() {
@@ -353,18 +385,17 @@ public class Personagem implements Combatente{
         this.manaMaxima = manaMaxima;
     }
 
+    /** Método responsável por pegar o valor do atributo do jogador
+     * @param escolha
+     * @return Retorna o valor total COM o buff ativo
+     */
     public int getAtributos(Atributos escolha) {
-        int atributoTotal = atributos.getOrDefault(escolha, 0);
+        int atributoTotal = ficha.getValorBase(escolha);
         EfeitoTemporario buffEncontrado = buffsAtivos.get(escolha);
         if(buffEncontrado != null){
             atributoTotal += buffEncontrado.getPotencia();
         }
         return atributoTotal;
-    }
-
-    
-    public void setAtributos(HashMap<Atributos, Integer> atributos) {
-        this.atributos = atributos;
     }
 
     public int getMana() {
@@ -375,10 +406,6 @@ public class Personagem implements Combatente{
         this.mana = mana;
     }
 
-    public HashMap<Atributos, Integer> getAtributos() {
-        return atributos;
-    }
-
     public HashMap<Atributos, EfeitoTemporario> getBuffsAtivos() {
         return buffsAtivos;
     }
@@ -387,26 +414,23 @@ public class Personagem implements Combatente{
         this.buffsAtivos = buffsAtivos;
     }
 
-    public List<Magia> getGrimorio() {
+    /**Método para acessar a mochila
+     * @return
+     */
+    public Mochila getMochila() {
+        return this.mochila;
+    }
+
+    public FichaAtributos getFicha() {
+        return ficha;
+    }
+
+    public Grimorio getGrimorio() {
         return grimorio;
     }
 
-    public List<Item> getMochila() {
-        return mochila;
+    public HashMap<Estados, EfeitoTemporario> getEstados() {
+        return estados;
     }
 
-    public void setMochila(List<Item> mochila) {
-        this.mochila = mochila;
-    }
-
-    public int getPecasOuro() {
-        return pecasOuro;
-    }
-
-    public void setPecasOuro(int pecasOuro) {
-        this.pecasOuro = pecasOuro;
-    }
-
-
-    
 }

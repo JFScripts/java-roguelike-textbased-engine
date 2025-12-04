@@ -22,7 +22,7 @@ public class JogadorStatus implements Tela{
         Console.titulo("Inventário de " + jogador.getNome());
         Console.printarBarra("Vida", jogador.getVida(), jogador.getVidaMaxima(), Cor.VERDE);
         Console.printarBarra("Mana", jogador.getMana(), jogador.getManaMaxima(), Cor.AZUL);
-        Console.printColorido("Ouro: " + jogador.getPecasOuro(), Cor.AMARELO);
+        Console.printColorido("Ouro: " + jogador.getOuro(), Cor.AMARELO);
         
         Console.titulo("Atributos");
         for(Atributos cAtributos : Atributos.values()){
@@ -58,7 +58,7 @@ public class JogadorStatus implements Tela{
         if(escolha == 0){
             return ultimaTela;
         } else if(escolha == 1){
-            return new Mochila(this);
+            return new TelaMochila(this);
         } else {
             Console.printColorido("Opção Invalida", Cor.VERMELHO);
             Console.pressioneENTER(input);

@@ -1,7 +1,5 @@
 package utils;
 
-import javax.xml.validation.SchemaFactoryConfigurationError;
-
 import entidades.Combatente;
 import enuns.Cor;
 import enuns.Estados;
