@@ -3,6 +3,7 @@ package entidades;
 import enuns.Atributos;
 import enuns.Estados;
 import utils.Dado;
+import utils.Posicao;
 
 public interface Combatente {
 
@@ -15,4 +16,7 @@ public interface Combatente {
     void curar(int valor);
     void receberBuff(Atributos atributo, int valor, int duracao);
     void receberEfeito(Estados estado, int valor, int turnos);
+    Posicao getPosicao();
+    void setPosicao(Posicao p);
+    char getSimbolo();
 }

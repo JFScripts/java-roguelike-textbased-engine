@@ -2,10 +2,12 @@ package entidades;
 import enuns.Atributos;
 import enuns.Estados;
 import utils.Dado;
+import utils.Posicao;
 
 public class Monstro implements Combatente{
     private String nome;
     private int vida, ac, modificador, forca;
+    private Posicao posicao;
 
     //Construtor
     public Monstro(String nome, int vida, int ac, int modificador, int forca) {
@@ -14,6 +16,8 @@ public class Monstro implements Combatente{
         this.ac = ac;
         this.modificador = modificador;
         this.forca = forca;
+
+        posicao = new Posicao(1, 1);
     }
 
     //Criar um clone
@@ -103,6 +107,22 @@ public class Monstro implements Combatente{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getVidaMaxima'");
     }
+
+    @Override
+    public Posicao getPosicao() {
+        return this.posicao;
+    }
+
+    @Override
+    public void setPosicao(Posicao p) {
+        this.posicao = p;
+    }
+
+    @Override
+    public char getSimbolo() {
+        return this.nome.charAt(0);
+    }
+
 
     
 

@@ -12,6 +12,7 @@ import enuns.Atributos;
 import enuns.Estados;
 import enuns.TipoEfeito;
 import utils.EfeitoTemporario;
+import utils.Posicao;
 import utils.ProcessadorDeEfeitos;
 import utils.Console;
 
@@ -27,6 +28,7 @@ public class Personagem implements Combatente{
     private Mochila mochila;
     private FichaAtributos ficha;
     private Grimorio grimorio;
+    private Posicao posicao;
 
     private Item mDireita; //Arma mão direita
     private Item mEsquerda; //Arma mão esquerda
@@ -54,6 +56,7 @@ public class Personagem implements Combatente{
         this.ficha = new FichaAtributos(inteligencia, forca, constituicao, agilidade);
         this.mochila = new Mochila();
         this.grimorio = new Grimorio();
+        this.posicao = new Posicao(0, 0);
         this.mEsquerda = mEsquerda;
         this.mDireita = mDireita;
 
@@ -325,6 +328,21 @@ public class Personagem implements Combatente{
 
     }
 
+    @Override
+    public Posicao getPosicao() {
+        return this.posicao;
+    }
+
+    @Override
+    public void setPosicao(Posicao p) {
+        this.posicao = p;
+    }
+
+    @Override
+    public char getSimbolo() {
+        return this.nome.charAt(0);
+    }
+
      //Getters e Setters
      public String getNome() {
         return nome;
@@ -433,4 +451,5 @@ public class Personagem implements Combatente{
         return estados;
     }
 
+    
 }
