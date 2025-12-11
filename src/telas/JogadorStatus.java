@@ -51,18 +51,18 @@ public class JogadorStatus implements Tela{
         Console.print("Mão Esquerda: " + maoEsquerda);
         
         Console.titulo("===");
-        
-        Console.opcao("00 - Voltar");
-        Console.opcao("01 - Abrir Mochila");
-        int escolha = Console.getIntINPUT(input);
-        if(escolha == 0){
-            return ultimaTela;
-        } else if(escolha == 1){
-            return new TelaMochila(this);
-        } else {
-            Console.printColorido("Opção Invalida", Cor.VERMELHO);
-            Console.pressioneENTER(input);
-            return this;
+        String[] opcoes = {"[V] - Voltar", "[M] - Mochila"};
+        Console.opcao(opcoes);
+        char escolha = Console.getCharInput("VM", input);
+        switch (escolha) {
+            case 'V':
+                return ultimaTela;
+            case 'M':
+                return new TelaMochila(this);
+            default:
+                Console.printColorido("Opção Invalida", Cor.VERMELHO);
+                Console.pressioneENTER(input);
+                return this;
         }
                 
     }

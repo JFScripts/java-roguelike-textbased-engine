@@ -10,22 +10,22 @@ public class MainMenu {
     
     public static Personagem iniciar(Scanner input){
         while (true) {
+            String[] opcoes = {"[N] - Novo Jogo", "[C] - Carregar jogo", "[S] - Sair"};
             Console.limpar();
             Console.titulo("Menu Principal");
             Console.print("Bem vindo a Masmorra Infinita, o lugar onde lendas são feitas.");
-            Console.opcao("01 - Novo Jogo");
-            Console.opcao("02 - Carregar Jogo");
-            Console.opcao("03 - Sair");
-            int escolha = Console.getIntINPUT(input);
+            Console.opcao(opcoes);
+ 
+            char escolha = Console.getCharInput("NCS", input);
 
             switch (escolha) {
-                case 1:
+                case 'N':
                     return criarNovoPersonagem(input);
-                case 2:
+                case 'C':
                     Console.print("Carregar jogo não implementado");
                     Console.esperar(1);
                     break;
-                case 3:
+                case 'S':
                     return null;
                 default:
                     Console.print("Opção Inválida");

@@ -1,7 +1,5 @@
 package telas;
 
-import static utils.Console.getIntINPUT;
-
 import java.util.List;
 import java.util.Scanner;
 
@@ -59,18 +57,18 @@ public class TelaMochila implements Tela {
 
     private void lidarComArma(Personagem jogador, Item arma, Scanner input){
         while (true) {
+            String[] armaEscolha = {"[C] - Cancelar", "[E] - Empunhar", "[J] - Jogar Fora"};
             Console.titulo("===");
-            Console.opcao("00 - Cancelar");
-            Console.opcao("01 - Empunhar");
-            Console.opcao("02 - Jogar Fora");
-            int escolha = Console.getIntINPUT(input);
+            Console.opcao(armaEscolha);
+
+            char escolha = Console.getCharInput("CEJ",input);
             switch (escolha) {
-                case 0: 
+                case 'C': 
                     return;
-                case 1:
+                case 'E':
                     boolean sucesso = escolherMao(jogador, arma, input);
                     if(sucesso) return;
-                case 2:
+                case 'J':
                     jogador.getMochila().removerItem(arma);
                     Console.printColorido("Você jogou " + arma.getNome() + " fora e ele desaparece", Cor.VERMELHO);
                     Console.pressioneENTER(input);
@@ -83,39 +81,42 @@ public class TelaMochila implements Tela {
     }
     private boolean escolherMao(Personagem jogador, Item item, Scanner input){
         while (true) {
+            String[] escolherMaoOpcao = {"[C] - Cancelar", "[D] - Mão Direita", "[E] - Mão Esquerda"}; 
             Console.limpar();
             Console.print("Escolha a Mão");
-            Console.opcao("00 - Cancelar");
-            Console.opcao("01 - Direita");
-            Console.opcao("02 - Esquerda");
-            int escolha = getIntINPUT(input);
-            if(escolha == 0){
-                return false; 
-            } else if(escolha == 1){
-                jogador.empunharItens(item, true);
-                Console.pressioneENTER(input);
-                return true;
-            } else if(escolha == 2){
-                jogador.empunharItens(item, false);
-                Console.pressioneENTER(input);
-                return true;
-            } else {
-                Console.printColorido("Escolha um opção valida", Cor.VERMELHO);
-
+            Console.opcao(escolherMaoOpcao);
+  
+            char escolha = Console.getCharInput("CDE",input);
+            switch (escolha) {
+                case 'C':
+                    return false; 
+                case 'D':
+                    jogador.empunharItens(item, true);
+                    Console.pressioneENTER(input);
+                    return true;
+                case 'E':
+                    jogador.empunharItens(item, false);
+                    Console.pressioneENTER(input);
+                    return true;
+                default:
+                    Console.printColorido("Escolha um opção valida", Cor.VERMELHO);
+                    break;
             }
+           
         }
     }
 
     private void lidarComItemGenerico(Personagem jogador, Item item, Scanner input){
         while (true) {
+            String[] opcoesItemGenerico = {"[C] - Cancelar", "[J] - Jogar Fora"};
             Console.titulo("===");
-            Console.opcao("00 - Cancelar");
-            Console.opcao("01 - Jogar Fora");
-            int escolha = Console.getIntINPUT(input);
+            Console.opcao(opcoesItemGenerico);
+
+            char escolha = Console.getCharInput("CJ",input);
             switch (escolha) {
-                case 0: 
+                case 'C': 
                     return;
-                case 1:
+                case 'J':
                     jogador.getMochila().removerItem(item);
                     Console.printColorido("Você jogou " + item.getNome() + " fora e ele desaparece", Cor.VERMELHO);
                     Console.pressioneENTER(input);

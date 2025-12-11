@@ -31,15 +31,12 @@ public class Combate implements Tela{
             narracao(jogador.getNome() + " VS " + alvo.getNome());
             print("Vida atual: "+jogador.getVida());
             print("Vida do "+alvo.getNome()+ ": "+ alvo.getVida());
-            opcao("01 - Atacar");
-            opcao("02 - Fugir");
-            opcao("03 - Ver Equipamento");
-            opcao("04 - Acessar Grimório");
+            opcao(opcoes());
 
-            int escolha = input.nextInt();
+            char escolha = Console.getCharInput("AFIG", input);
             input.nextLine();
             switch (escolha) {
-                case 1:
+                case 'A':
                     limpar();
                     jogador.atacar(alvo,d20);
                     if(alvo.estaVivo()){
@@ -48,13 +45,13 @@ public class Combate implements Tela{
                     print("\nPressione ENTER para continuar...");
                     input.nextLine();
                     break;
-                case 2:
+                case 'F':
                     print(jogador.getNome()+" fugiu!");
                     esperar(1);
                     return new MenuJogo();
-                case 3:
+                case 'I':
                     return new JogadorStatus(this);
-                case 4:
+                case 'G':
                     return new TelaMagia(this, alvo);
                 default:
                     print("Opção INVALIDA tente novamente");
@@ -69,12 +66,12 @@ public class Combate implements Tela{
             esperar(2);
             if(randon.nextInt(100) < 30){
                 Item loot = GeradorDeArma.gerarArmaAleatoria(jogador);
+                String[] aceitarLoot = {"[S] - Sim", "[N] - Não"};
                 limpar();
                 Console.print(alvo.getNome() + " deixou cair " + loot.toString() + ", pegar?");
-                Console.opcao("01 - Sim");
-                Console.opcao("02 - Não");
-                int escolha = Console.getIntINPUT(input);
-                if(escolha == 1){
+                Console.opcao(aceitarLoot);
+                char escolha = Console.getCharInput("SN", input);
+                if(escolha == 'S'){
                     jogador.receberItem(loot);
                     Console.pressioneENTER(input);
                 } else {
@@ -90,5 +87,16 @@ public class Combate implements Tela{
             esperar(3);
             return null;
             }
+    }
+
+    private String[] opcoes(){
+        String[] escolhas = {
+            "[A] - Atacar",
+            "[F] - Fugir",
+            "[I] - Inventário",
+            "[G] - Grimório",
+        };
+
+        return escolhas;
     }
 }

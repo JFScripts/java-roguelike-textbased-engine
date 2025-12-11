@@ -1,5 +1,7 @@
 package mundo;
 
+import java.util.Random;
+
 import entidades.Monstro;
 import entidades.Personagem;
 import utils.Console;
@@ -37,6 +39,7 @@ public class Sala {
         for(int y = 0; y < this.height; y++){
             for(int x = 0; x < this.width; x++){
                 Posicao temp = new Posicao(x, y);
+
                 if(jogador.getPosicao().colisao(temp)){
                     System.out.print(jogador.getSimbolo() + " ");
                 } else if(monstro != null && monstro.getPosicao().colisao(temp)){
@@ -46,11 +49,11 @@ public class Sala {
                 } else {
                     System.out.print(". ");
                 }
+
             }
             System.out.println();
         }
     }
-
     
     /**Método para verificar a colisão com paredes e monstros
      * @param p A posição do jogador
@@ -62,7 +65,7 @@ public class Sala {
             p.getY() <= 0 || p.getY() >= this.height - 1) {
             return false; 
         }
-        if (p.colisao(monstro.getPosicao())) {
+        if (monstro != null && p.colisao(monstro.getPosicao())) {
             return false; 
         }
         

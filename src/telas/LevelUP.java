@@ -1,5 +1,7 @@
 package telas;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import entidades.Magia;
@@ -20,13 +22,17 @@ public class LevelUP implements Tela{
         Console.limpar();
         Console.titulo("Level Up");
         Console.print("Parabéns! Você passou de nivel, escolha um atributo para melhorar");
+        
+        List <String> atributoLista = new ArrayList<>();
 
         Atributos[] atributo = Atributos.values();
         for(int i = 0; i < atributo.length; i ++){
             Atributos curAtributos = atributo[i];
             int valorAtual = jogador.getAtributos(curAtributos);
-            Console.opcao((i + 1) + " - " + curAtributos +" : " + valorAtual);
+            atributoLista.add((i + 1) + " - " + curAtributos +" : " + valorAtual);
         }
+        Console.opcao(atributoLista);
+        
         while (true) {
             Console.print("Digite o Atributo desejado");
             int escolha = Console.getIntINPUT(input);

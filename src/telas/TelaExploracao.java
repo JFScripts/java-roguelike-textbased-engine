@@ -16,17 +16,10 @@ public class TelaExploracao implements Tela {
     private Sala salaAtual;
 
     // Construtor: Prepara o ambiente de teste
-    public TelaExploracao(Tela ultimaTela, Personagem jogador) {
+    public TelaExploracao(Tela ultimaTela, Personagem jogador, Sala curSala) {
         this.ultimaTela = ultimaTela;
         
-        // --- SETUP DE TESTE ---
-        // Criamos um monstro bobo só para ocupar espaço no mapa
-        // (Nome, For, Agi, Con, XP) - Ajuste conforme seu construtor de Monstro
-        Monstro monstroTeste = new Monstro("Boneco de Treino", 0, 0, 0, 0);
-        
-        // Criamos a sala 10x10 e jogamos os dois lá dentro
-        // A Sala já vai cuidar de posicionar o jogador no (1,1)
-        this.salaAtual = new Sala(10, 10, jogador, monstroTeste);
+        this.salaAtual = curSala;
     }
 
     @Override

@@ -1,10 +1,12 @@
 package utils;
 
+import java.util.List;
 import java.util.Scanner;
 
 import enuns.Cor;
 
 public class Console {
+
     public static void limpar(){
         System.out.print("\033[H\033[2J");
         System.out.flush();
@@ -23,8 +25,20 @@ public class Console {
         System.out.println("'" + texto + "'");
     }
 
-    public static void opcao(Object texto){
+    public static void opcaoInt(Object texto){
         System.out.println("> " + texto);
+    }
+
+    public static void opcao(Object[] texto){
+        for(int i = 0; i < texto.length; i++){
+            System.out.println("> " + texto[i]);
+        }
+    }
+
+    public static void opcao(List<String> texto){
+        for(int i = 0; i < texto.size(); i++){
+            System.out.println("> " + texto.get(i));
+        }
     }
 
     public static void print(Object texto){
@@ -101,6 +115,22 @@ public class Console {
             printColorido(barra, cor);
         }
 
+    }
+
+    public static char getCharInput(String opcoes, Scanner input){
+        while(true){
+            System.out.print("> ");
+            String escolha = input.nextLine().toUpperCase();
+            if(escolha.length() > 0){
+                char charEscolhido = escolha.charAt(0);
+                if(opcoes.indexOf(charEscolhido) != -1){
+                    return charEscolhido;
+                } 
+            }  
+            printColorido("Opção Inválida, tente novamente", Cor.VERMELHO);
+            pressioneENTER(input);
+            
+        }
     }
 
 

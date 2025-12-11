@@ -31,6 +31,8 @@ public class TelaMagia implements Tela{
     @Override
     public Tela executar(Personagem jogador, Scanner input) {
         while (true) {
+            List<String> stringMagiaLista = new ArrayList<>();
+
             Console.limpar();
             Console.titulo("Grimório");
             int tamanhoGrimorio = jogador.getGrimorio().getMagias().size();
@@ -47,8 +49,9 @@ public class TelaMagia implements Tela{
             for(int i = 0; i < tamanhoGrimorio; i ++){
                 String nomeCurMagia = jogador.getGrimorio().getMagiaIndex(i).getNome();
                 int custoCurMagia = jogador.getGrimorio().getMagiaIndex(i).getCustoMana();
-                Console.opcao((i+1) + " - " + nomeCurMagia + " | MP: " +custoCurMagia + " | Efeitos: " + jogador.getGrimorio().getMagiaIndex(i).getEfeito());
+                stringMagiaLista.add((i+1) + " - " + nomeCurMagia + " | MP: " +custoCurMagia + " | Efeitos: " + jogador.getGrimorio().getMagiaIndex(i).getEfeito());
             }
+            Console.opcao(stringMagiaLista);
             Console.print("Digite a magia que deseja conjurar ou pressione 0 para voltar");
             int escolha = input.nextInt();
             input.nextLine();
@@ -67,7 +70,7 @@ public class TelaMagia implements Tela{
                 } else {
                     Console.print("Selecione o alvo ou aperte 0 para voltar:");
                     for(int i = 0; i < alvos.size(); i++){
-                        Console.opcao((i+1) + " - " + alvos.get(i).getNome());
+                        Console.opcaoInt((i+1) + " - " + alvos.get(i).getNome());
                     }
                     escolha = input.nextInt();
                     input.nextLine();
@@ -80,16 +83,16 @@ public class TelaMagia implements Tela{
                         continue;
                     }
                 }
+                String[] selecionarMagia = {"[C] - Cancelar", "[S] - Sim", "[N] - Não"};
                 print("Conjurar " + magiaSelecionada.getNome() + " em " + alvoFinal.getNome() + "?");
-                Console.opcao("00 - Cancelar");
-                Console.opcao("01 - Sim");
-                Console.opcao("02 - Não");
-                escolha = input.nextInt();
+                Console.opcao(selecionarMagia);
+
+                char decisao = Console.getCharInput("CSN", input);
                 input.nextLine();
-                switch (escolha) {
-                    case 0:
+                switch (decisao) {
+                    case 'C':
                         return this;
-                     case 1:
+                     case 'S':
                         jogador.conjurarMagia(alvoFinal, magiaSelecionada);
                         if(alvoInimigo != null && alvoInimigo.estaVivo()){
                             jogador.passarTurno();
@@ -99,7 +102,7 @@ public class TelaMagia implements Tela{
                         }
                         Console.pressioneENTER(input);
                         return ultimaTela;
-                    case 2:
+                    case 'N':
                         Console.print("Voltando...");
                         Console.esperar(0.5);
                         return ultimaTela;
